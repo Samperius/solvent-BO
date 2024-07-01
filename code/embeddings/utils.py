@@ -5,6 +5,7 @@ def name_to_smiles(name):
     try:
         return pcp.get_compounds(name, 'name')[0].canonical_smiles
     except:
+        print('could not fetch smiles')
         return None
 
 def smiles_to_iupac(smiles, orig_name):

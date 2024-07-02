@@ -1,4 +1,6 @@
 #Preparing dataset
+import sys
+sys.path.append('/home/samuli/anaconda3/lib/python3.9/site-packages/') 
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 import torch
@@ -34,12 +36,20 @@ def train(train_dataloader, model, criterion, optimizer, num_epochs, device, mod
         for i, batch in enumerate(train_dataloader):
             optimizer.zero_grad()
             X, y = batch[0].to(device), batch[1].to(device)
+            print("min", X.min())
+            print("max", X.max())
             attention_mask = X>1
-            pred = torch.sigmoid(model(X, attention_mask=attention_mask).logits)
+            try:
+                pred = torch.sigmoid(model(X, attention_mask=attention_mask).logits)
+            except:
+                print('error')
+                print(X)
+                print(attention_mask)
+                continue
             pred = pred.reshape(y.shape)
             loss = criterion(pred.float(), y.float())
-            epoch_cum_loss += loss
-            losses.append(loss)
+            epoch_cum_loss += loss.detach()
+            losses.append(loss.detach())
             print(f'epoch {epoch+1}/{num_epochs}, batch number {i+1}/{len(train_dataloader)}, batch cumloss {epoch_cum_loss/(i+1)}')
             loss.backward()
             optimizer.step()

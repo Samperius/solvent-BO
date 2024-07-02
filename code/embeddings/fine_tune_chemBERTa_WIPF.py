@@ -22,10 +22,11 @@ model_path = 'finetuned_chemBERTa'
 #Args data
 max_smiles_len = 512
 
-
 model = AutoModelForSequenceClassification.from_pretrained("seyonec/PubChem10M_SMILES_BPE_450k", output_attentions=True, output_hidden_states=True, num_labels = 1)
 tokenizer = AutoTokenizer.from_pretrained("seyonec/PubChem10M_SMILES_BPE_450k")
-
+tokenizer.model_max_length = max_smiles_len
+print(tokenizer.vocab_size)
+print(model.config.vocab_size)
 #load wipf dataframe
 df = pd.read_excel('data/wipf_1.7.xlsx')
 
